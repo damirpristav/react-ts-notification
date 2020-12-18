@@ -1,24 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { FC, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import './App.css';
 
-function App() {
+import Notification from './components/Notification';
+import { RootState } from './store';
+import { setNotification } from './store/actions/notificationActions';
+
+const App: FC = () => {
+  const dispatch = useDispatch();
+  const { message, type } = useSelector((state: RootState) => state.notification);
+  const [counter, setCounter] = useState(1);
+
+  const btnClickHandler = (type: 'success' | 'danger' | 'warning') => {
+    dispatch(setNotification({ message: `Notification message ${counter}`, type }));
+    setCounter(prevCounter => prevCounter + 1);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {message && <Notification message={message} type={type} />}
+      <div className="container">
+        <h1 className="is-size-1 mb-4">Test notifications</h1>
+        <button className="button mr-2" onClick={() => btnClickHandler('success')}>Add success notification</button>
+        <button className="button mr-2" onClick={() => btnClickHandler('danger')}>Add danger notification</button>
+        <button className="button mr-2" onClick={() => btnClickHandler('warning')}>Add warning notification</button>
+      </div>
     </div>
   );
 }
